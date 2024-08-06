@@ -1,28 +1,42 @@
-const quickSort = (array: number[]): number[] => {
-  if (array.length <= 1) {
+const quickSort = (array: number[]) => quickSortInPlace(array.slice(), 0, array.length);
+
+const quickSortInPlace = (array: number[], start: number, end: number): number[] => {
+  if ((end - start) <= 1) {
     return array;
   }
 
-  const pivotI = Math.floor(array.length / 2);
+  const initialPivotI = start + Math.floor((end - start) / 2);
 
-  const left: number[] = [];
-  const right: number[] = [];
+  let pivotI = initialPivotI;
 
-  for (let i = 0; i < array.length; i++) {
-    if (i === pivotI) {
-      continue;
-    }
-    if (array[i] <= array[pivotI]) {
-      left.push(array[i]);
-    } else {
-      right.push(array[i]);
+  // left side
+  for (let i = 0; i < Math.floor((end - start) / 2); i++) {
+    const index = initialPivotI - i - 1;
+    if (array[index] > array[pivotI]) {
+      const current = array[index];
+      array[index] = array[pivotI - 1];
+      array[pivotI - 1] = array[pivotI];
+      array[pivotI] = current;
+      pivotI--;
     }
   }
 
-  const sortedLeft = quickSort(left);
-  const sortedRight = quickSort(right);
+  // right side
+  for (let i = 0; i < Math.floor((end - start) / 2); i++) {
+    const index = initialPivotI + i + 1;
+    if (array[index] < array[pivotI]) {
+      const current = array[index];
+      array[index] = array[pivotI + 1];
+      array[pivotI + 1] = array[pivotI];
+      array[pivotI] = current;
+      pivotI++;
+    }
+  }
 
-  return [...sortedLeft, array[pivotI], ...sortedRight];
+  quickSortInPlace(array, start, pivotI);
+  quickSortInPlace(array, pivotI + 1, end);
+
+  return array;
 };
 
 export default quickSort;
